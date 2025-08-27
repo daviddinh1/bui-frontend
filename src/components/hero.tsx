@@ -1,6 +1,6 @@
 export function Hero() {
   return (
-    <section className="bg-slate-700 text-white py-20 text-center space-y-6">
+    <section className="bg-slate-900 text-white py-20 text-center space-y-6">
       <h1 className="text-4xl md:text-5xl font-bold">
         Long-Term Wealth,
         <br />
