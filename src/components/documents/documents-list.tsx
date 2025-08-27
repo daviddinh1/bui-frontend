@@ -4,7 +4,7 @@ type Doc = {
   title: string;
   description: string;
   date: string;
-  path: string; // storage path/key
+  path: string;
 };
 
 const docs: Doc[] = [
@@ -12,7 +12,7 @@ const docs: Doc[] = [
     title: "Q1 2025 Performance",
     description: "Quarterly Report",
     date: "Apr 15, 2025",
-    path: "PDF Test.pdf", // from your Supabase bucket
+    path: "PDF Test.pdf",
   },
 ];
 
