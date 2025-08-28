@@ -2,6 +2,7 @@
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
 
 //components we use to build our form
 import { Button } from "@/components/ui/button";
@@ -52,10 +53,15 @@ export default function SignupPage() {
     },
   });
 
+  const router = useRouter();
+
   //this function will most likely call the supabase component for signing up
   async function onSubmit(values: z.infer<typeof signupFormSchema>) {
     try {
-      await signUp(values.email, values.password);
+      const data = await signUp(values.email, values.password);
+      if (data.user) {
+        router.push("/dashboard");
+      }
     } catch (error) {
       console.error("error msg: ", error);
     }
@@ -98,7 +104,7 @@ export default function SignupPage() {
                       />
                     </FormControl>
                     <FormDescription className="text-xs text-gray-500">
-                      We'll use this for your account communications
+                      We&apos;ll use this for your account communications
                     </FormDescription>
                     <FormMessage className="text-xs" />
                   </FormItem>
