@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 
-//components we use to build our form
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -16,58 +15,35 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { signUp } from "@/lib/auth";
+import { signIn } from "@/lib/auth";
 import Link from "next/link";
 
-export const signupFormSchema = z
-  .object({
-    email: z
-      .string()
-      .min(1, "Email is required")
-      .email("Please enter a valid email address"),
+export const loginFormSchema = z.object({
+  email: z.string().min(1, "Please enter a email"),
+  password: z.string().min(1, "Please enter a password"),
+});
 
-    password: z
-      .string()
-      .min(8, "Password must be at least 8 characters")
-      .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
-      .regex(/[a-z]/, "Password must contain at least one lowercase letter")
-      .regex(/[0-9]/, "Password must contain at least one number")
-      .regex(
-        /[^A-Za-z0-9]/,
-        "Password must contain at least one special character"
-      ),
-
-    confirmPassword: z.string().min(1, "Please confirm your password"),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"], // Point the error to confirmPassword field
-  });
-
-export default function SignupPage() {
-  const signUpForm = useForm<z.infer<typeof signupFormSchema>>({
-    resolver: zodResolver(signupFormSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-      confirmPassword: "",
-    },
-  });
-
+export default function LoginPage() {
   const router = useRouter();
 
-  //this function will most likely call the supabase component for signing up
-  async function onSubmit(values: z.infer<typeof signupFormSchema>) {
+  async function onSubmit(values: z.infer<typeof loginFormSchema>) {
     try {
-      const data = await signUp(values.email, values.password);
+      const data = await signIn(values.email, values.password);
       if (data.user) {
         router.push("/dashboard");
       }
     } catch (error) {
-      console.error("error msg: ", error);
+      console.error("error in loginPage: ", error);
     }
   }
 
+  const loginForm = useForm<z.infer<typeof loginFormSchema>>({
+    resolver: zodResolver(loginFormSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-800 via-slate-700 to-slate-900 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
@@ -77,19 +53,19 @@ export default function SignupPage() {
             BUI CAPITAL
           </h1>
           <p className="text-blue-100 text-lg">
-            Create Your Investment Account
+            Sign In To Your Investment Account
           </p>
         </div>
 
         {/* Form Container */}
         <div className="bg-white rounded-xl shadow-2xl p-8">
-          <Form {...signUpForm}>
+          <Form {...loginForm}>
             <form
-              onSubmit={signUpForm.handleSubmit(onSubmit)}
+              onSubmit={loginForm.handleSubmit(onSubmit)}
               className="space-y-6"
             >
               <FormField
-                control={signUpForm.control}
+                control={loginForm.control}
                 name="email"
                 render={({ field }) => (
                   <FormItem>
@@ -105,7 +81,7 @@ export default function SignupPage() {
                       />
                     </FormControl>
                     <FormDescription className="text-xs text-gray-500">
-                      We&apos;ll use this for your account communications
+                      Enter your registered email address
                     </FormDescription>
                     <FormMessage className="text-xs" />
                   </FormItem>
@@ -113,7 +89,7 @@ export default function SignupPage() {
               />
 
               <FormField
-                control={signUpForm.control}
+                control={loginForm.control}
                 name="password"
                 render={({ field }) => (
                   <FormItem>
@@ -123,37 +99,13 @@ export default function SignupPage() {
                     <FormControl>
                       <Input
                         type="password"
-                        placeholder="Create a strong password"
+                        placeholder="Enter your password"
                         className="h-12 border-2 border-gray-200 focus:border-blue-600 focus:ring-0 rounded-lg bg-gray-50 focus:bg-white transition-all duration-200"
                         {...field}
                       />
                     </FormControl>
                     <FormDescription className="text-xs text-gray-500">
-                      Must be 8+ characters with mixed case, numbers & symbols
-                    </FormDescription>
-                    <FormMessage className="text-xs" />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={signUpForm.control}
-                name="confirmPassword"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm font-semibold text-gray-700">
-                      Confirm Password
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        type="password"
-                        placeholder="Re-enter your password"
-                        className="h-12 border-2 border-gray-200 focus:border-blue-600 focus:ring-0 rounded-lg bg-gray-50 focus:bg-white transition-all duration-200"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormDescription className="text-xs text-gray-500">
-                      Please confirm your password matches
+                      Enter your account password
                     </FormDescription>
                     <FormMessage className="text-xs" />
                   </FormItem>
@@ -162,9 +114,9 @@ export default function SignupPage() {
 
               <Button
                 type="submit"
-                className="w-full h-12 bg-slate-800 hover:bg-slate-600 text-white font-semibold rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl mt-7"
+                className="w-full h-12 bg-slate-800 hover:bg-slate-600 text-white font-semibold rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl mt-5"
               >
-                Create Account
+                Sign In
               </Button>
             </form>
           </Form>
@@ -172,12 +124,12 @@ export default function SignupPage() {
           {/* Login Link */}
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
-              Already have an account?{" "}
+              Don&apos;t have an account?{" "}
               <Link
-                href="/login"
+                href="/signup"
                 className="text-slate-700 font-semibold hover:text-slate-600 hover:underline transition-colors duration-200"
               >
-                Sign In
+                Sign Up
               </Link>
             </p>
           </div>
@@ -186,8 +138,7 @@ export default function SignupPage() {
         {/* Footer Note */}
         <div className="mt-6 text-center">
           <p className="text-blue-100 text-xs">
-            By creating an account, you agree to our Terms of Service and
-            Privacy Policy
+            By signing in, you agree to our Terms of Service and Privacy Policy
           </p>
         </div>
       </div>

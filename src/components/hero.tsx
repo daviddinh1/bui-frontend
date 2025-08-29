@@ -1,3 +1,4 @@
+import Button from "./button";
 export function Hero() {
   return (
     <section className="bg-slate-900 text-white py-20 text-center space-y-6">
@@ -11,9 +12,12 @@ export function Hero() {
         wealth through a disciplined approach to equities, private equity, and
         real estate.
       </p>
-      <button className="bg-white text-slate-800 px-6 py-3 rounded-md font-semibold hover:bg-gray-100">
+      <Button
+        href="/login"
+        className="bg-white text-slate-800 px-6 py-3 rounded-md font-semibold hover:bg-gray-100 cursor-pointer"
+      >
         Investor Login
-      </button>
+      </Button>
     </section>
   );
 }

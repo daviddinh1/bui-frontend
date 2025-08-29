@@ -5,7 +5,7 @@ export default function Navbar() {
     <>
       <div className="flex justify-around items-center p-3">
         <div className="text-slate-700 text-xl font-bold">BUI CAPITAL</div>
-        <Button />
+        <Button href="/login">INVESTOR LOGIN</Button>
       </div>
     </>
   );
